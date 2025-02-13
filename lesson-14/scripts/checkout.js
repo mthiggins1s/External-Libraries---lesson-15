@@ -1,7 +1,8 @@
 import {cart, removeFromCart} from '../data/cart.js';
 import {products} from '../data/products.js';
 import {formatCurrency} from './utils/money.js';
-import {hello} from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js';
+import {hello} from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js'; // This loads the ESM module from the internet when we have naming conflicts.
+import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js'; // we dont need brackets for dayjs. // The syntax is called "default export": another way of exporting from a file; only when we want to export one thing from a file. 
 
 hello(); // runs the function hello();
 const today = dayjs(); // runs the function dayjs(); Gives us the object of the current day and time.
