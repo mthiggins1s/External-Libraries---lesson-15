@@ -30,17 +30,15 @@ cart.forEach((cartItem) => {
 
   let selectedDeliveryOption;
 
-  deliveryOption.forEach((option) => {  // Change from deliveryOptions to deliveryOption
-    if(option.id === deliveryOptionId) {
+  deliveryOption.forEach((option) => {  
+    if (option.id === deliveryOptionId) {
       selectedDeliveryOption = option;
     }
   });
 
+  // You can declare today once outside the loops
   const today = dayjs(); // calls today's date
-  const deliveryDate = today.add(
-    deliveryOption.deliveryDays,
-    'days'
-  );
+  const deliveryDate = today.add(selectedDeliveryOption.deliveryDays, 'days'); // Use selectedDeliveryOption here
   const dateString = deliveryDate.format('dddd, MMMM D');
 
   cartSummaryHTML += `
@@ -82,12 +80,9 @@ cart.forEach((cartItem) => {
 function deliveryOptionsHTML(matchingProduct, cartItem) {
   let html = '';
 
-  deliveryOption.forEach((option) => {  // Again, update from deliveryOptions to deliveryOption
-    const today = dayjs(); // calls today's date
-    const deliveryDate = today.add(
-      option.deliveryDays,
-      'days'
-    );
+  deliveryOption.forEach((option) => {
+    const today = dayjs(); // You can leave this here as it's recalculated per option
+    const deliveryDate = today.add(option.deliveryDays, 'days');
     const dateString = deliveryDate.format('dddd, MMMM D');
 
     const priceString = option.priceCents === 0
@@ -135,10 +130,10 @@ document.querySelectorAll('.js-delete-link')
     });
   });
 
-  document.querySelectorAll('.js-delivery-option')
-    .forEach((element) => {
-      element.addEventListener('click', () => {
-        const {productId, deliveryOptionId} = element.dataset; // shorthand property.
-        updateDeliveryOption(productId, deliveryOptionId);
-      });
+document.querySelectorAll('.js-delivery-option')
+  .forEach((element) => {
+    element.addEventListener('click', () => {
+      const {productId, deliveryOptionId} = element.dataset; // shorthand property.
+      updateDeliveryOption(productId, deliveryOptionId);
     });
+  });
