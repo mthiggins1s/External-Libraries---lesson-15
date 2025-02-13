@@ -1,9 +1,10 @@
-import {cart, removeFromCart} from '../data/cart.js';
+import {cart, removeFromCart, updateDeliveryOption} from '../data/cart.js';
 import {products} from '../data/products.js';
 import {formatCurrency} from './utils/money.js';
 import {hello} from 'https://unpkg.com/supersimpledev@1.0.1/hello.esm.js'; // This loads the ESM module from the internet when we have naming conflicts.
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js'; // we dont need brackets for dayjs. // The syntax is called "default export": another way of exporting from a file; only when we want to export one thing from a file. 
 import {deliveryOption} from '../data/deliveryOptions.js';
+
 
 hello(); // runs the function hello();
 const today = dayjs(); // runs the function dayjs(); Gives us the object of the current day and time.
@@ -37,7 +38,7 @@ cart.forEach((cartItem) => {
 
   const today = dayjs(); // calls today's date
   const deliveryDate = today.add(
-    selectedDeliveryOption.deliveryDays,
+    deliveryOption.deliveryDays,
     'days'
   );
   const dateString = deliveryDate.format('dddd, MMMM D');
@@ -96,7 +97,9 @@ function deliveryOptionsHTML(matchingProduct, cartItem) {
     const isChecked = option.id === cartItem.deliveryOptionId;
 
     html += `
-      <div class="delivery-option">
+      <div class="delivery-option js-delivery-option"
+      data-product-id="${matchingProduct.id}"
+      data-delivery-option-id="${option.id}">
         <input type="radio"
           ${isChecked ? 'checked' : ''}
           class="delivery-option-input"
@@ -131,3 +134,11 @@ document.querySelectorAll('.js-delete-link')
       container.remove();
     });
   });
+
+  document.querySelectorAll('.js-delivery-option')
+    .forEach((element) => {
+      element.addEventListener('click', () => {
+        const {productId, deliveryOptionId} = element.dataset; // shorthand property.
+        updateDeliveryOption(productId, deliveryOptionId);
+      });
+    });
