@@ -25,16 +25,31 @@ cart.forEach((cartItem) => {
     }
   });
 
+  const deliveryOptionId = cartItem.deliveryOptionId;
+
+  let selectedDeliveryOption;
+
+  deliveryOption.forEach((option) => {  // Change from deliveryOptions to deliveryOption
+    if(option.id === deliveryOptionId) {
+      selectedDeliveryOption = option;
+    }
+  });
+
+  const today = dayjs(); // calls today's date
+  const deliveryDate = today.add(
+    selectedDeliveryOption.deliveryDays,
+    'days'
+  );
+  const dateString = deliveryDate.format('dddd, MMMM D');
+
   cartSummaryHTML += `
-    <div class="cart-item-container
-      js-cart-item-container-${matchingProduct.id}">
+    <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
       <div class="delivery-date">
-        Delivery date: Tuesday, June 21
+        Delivery date: ${dateString}
       </div>
 
       <div class="cart-item-details-grid">
-        <img class="product-image"
-          src="${matchingProduct.image}">
+        <img class="product-image" src="${matchingProduct.image}">
 
         <div class="cart-item-details">
           <div class="product-name">
@@ -44,12 +59,8 @@ cart.forEach((cartItem) => {
             $${formatCurrency(matchingProduct.priceCents)}
           </div>
           <div class="product-quantity">
-            <span>
-              Quantity: <span class="quantity-label">${cartItem.quantity}</span>
-            </span>
-            <span class="update-quantity-link link-primary">
-              Update
-            </span>
+            <span>Quantity: <span class="quantity-label">${cartItem.quantity}</span></span>
+            <span class="update-quantity-link link-primary">Update</span>
             <span class="delete-quantity-link link-primary js-delete-link" data-product-id="${matchingProduct.id}">
               Delete
             </span>
@@ -60,46 +71,46 @@ cart.forEach((cartItem) => {
           <div class="delivery-options-title">
             Choose a delivery option:
           </div>
-          ${deliveryOptionsHTML(matchingProduct)}
+          ${deliveryOptionsHTML(matchingProduct, cartItem)} <!-- Using this function -->
         </div>
       </div>
     </div>
   `;
 });
 
-function deliveryOptionsHTML(matchingProduct) {
+function deliveryOptionsHTML(matchingProduct, cartItem) {
   let html = '';
 
-
-  deliveryOption.forEach((deliveryOption) =>{
-    const today = dayjs(); // calls todays date.
+  deliveryOption.forEach((option) => {  // Again, update from deliveryOptions to deliveryOption
+    const today = dayjs(); // calls today's date
     const deliveryDate = today.add(
-      deliveryOption.deliveryDays,
+      option.deliveryDays,
       'days'
     );
-    const dateString = deliveryDate.format(
-      'dddd, MMMM D'
-    );
+    const dateString = deliveryDate.format('dddd, MMMM D');
 
-    const priceString = deliveryOption.priceCents === 0
+    const priceString = option.priceCents === 0
       ? 'FREE'
-      : `$${formatCurrency(deliveryOption.priceCents)} - `;
+      : `$${formatCurrency(option.priceCents)} - `;
 
-    html += 
+    const isChecked = option.id === cartItem.deliveryOptionId;
 
-`<div class="delivery-option">
-            <input type="radio"
-              class="delivery-option-input"
-              name="delivery-option-${matchingProduct.id}">
-            <div>
-              <div class="delivery-option-date">
-                ${dateString}
-              </div>
-              <div class="delivery-option-price">
-                ${priceString} - Shipping
-              </div>
-            </div>
-          </div>`
+    html += `
+      <div class="delivery-option">
+        <input type="radio"
+          ${isChecked ? 'checked' : ''}
+          class="delivery-option-input"
+          name="delivery-option-${matchingProduct.id}">
+        <div>
+          <div class="delivery-option-date">
+            ${dateString}
+          </div>
+          <div class="delivery-option-price">
+            ${priceString} - Shipping
+          </div>
+        </div>
+      </div>
+    `;
   });
 
   return html;
